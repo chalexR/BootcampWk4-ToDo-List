@@ -14,7 +14,8 @@
 <!--
 TODO:
     I would like to store the tasks in an array in a file on the server. This would mean:
-    - 1: creating an array from a file on page load
+    - # DONE: creating an array from a file on page load - not possible without additional code. I think this would be better off in an AJAX or SQL server environemtn for this functionality. I have created a static array on the page that can be modified.
+
     - 2: displaying 'incomplete' tasks as default
     - 3: using a filter system to display all, in progress, incomplete and complete
     - 1: modifying the array (delete, complete, edit)
@@ -69,6 +70,10 @@ TODO:
 
         <!-- Task Display Section -->
         <main class="main-content">
+            filter:
+            <button class="btn-primary" type="button" onclick="loadTasks('incomplete')">Incomplete</button>
+            <button class="btn-primary" type="button" onclick="loadTasks(false)">All</button>
+            <button class="btn-primary" type="button" onclick="loadTasks('complete')">Complete</button>
             <h2>Task List</h2>
             <table class="task-table">
                 <thead>
