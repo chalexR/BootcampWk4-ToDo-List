@@ -31,6 +31,7 @@ body {
     background-color: var(--accent-color);
     display: flex;
     justify-content: space-between;
+    flex-wrap:wrap;
     align-items: center;
     padding: 20px;
     color: white;
@@ -76,6 +77,17 @@ body {
 
 .mobile-nav{
     display: none;
+}
+/* New Task Section */
+#newTaskSection{
+    flex: 1 0 100%;
+    margin-bottom:20px;
+}
+#newTaskInput{
+    width:80%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 5px;
 }
 
 /* Main Content */
