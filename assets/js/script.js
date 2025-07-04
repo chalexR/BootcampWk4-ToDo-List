@@ -4,7 +4,7 @@
 var taskArray = [{
     id : 1,
     status : "complete",
-    content : "create an array",
+    content : "create an array to hold the tasks",
     created : "2025/07/03 16:37",
     completed : "2025/07/03 16:45"
 },
@@ -35,6 +35,13 @@ var taskArray = [{
     content : "create a way for the script to check for duplicate tasks and alert the user",
     created : "2025/07/04 13:42",
     completed : "2025/07/04 14:33"
+},
+{
+    id : 6,
+    status : "incomplete",
+    content : "create an edit task function.<br>I would like this to piggy back off of the existing addTask function. The way i imagine this working is setting a default edit variable to false on the addTask function.<br>then if the edit function is set to tru this would allow the duplication check to go uncalled and would also use the duplication check to get the id. The id would then be used to edit the task rather than create a new task<br>to begin with i need to find a way of adding a new state to the newTaskButton which allows the edit function to bed fed through",
+    created : "2025/07/04 14:45",
+    completed : false
 }];
 
 //Wait for Document to load
@@ -45,7 +52,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // add an event listener to see when the new Task Button has been clicked
     taskButton.addEventListener("click", () => {
-        addTask()
+        let edit = false;
+        // check if the button is in edit mode or not and set the edit variable to true if we are
+        if(taskButton.classList.contains("task-edit")){edit = true}
+
+        addTask(edit);
         //DEBUG
         //console.log("newTaskButton");
     });
@@ -71,7 +82,7 @@ function loadTasks(condition = "incomplete"){
             <td>${taskStatus}</td>
             <td>${taskContent}</td>
             <td>${taskCreated}</td>
-            <td><button class="complete-btn" onclick="completeTask(${taskID})">Mark as Complete</button></td>
+            <td><button class="complete-btn" onclick="completeTask(${taskID})">✅</button><button class="complete-btn" onclick="editTask(${taskID})">✍🏻</button></td>
         `;
         let newTaskEl = document.createElement("tr");
         newTaskEl.innerHTML = innerHTML;
@@ -80,14 +91,39 @@ function loadTasks(condition = "incomplete"){
 
 }
 
-function completeTask(id){
+function editTask(id){
+    //cycle through tasks in the Array
     for (i=0; i<taskArray.length; i++){
+        //check to see if the current task ID equals the id we are trying to change
         if (taskArray[i].id == id){
+            // set a variable for the taskInput
+            var taskInputEl = document.getElementById("newTaskInput");
+            var taskIdInputEl = document.getElementById("taskEditID");
+            // set a variable for the taskButton
+            const taskButton = document.getElementById("newTaskButton");
+            // set the task Input to the value of the task content we're editting
+            taskInputEl.value = taskArray[i].content;
+            taskIdInputEl.value = id;
+            // set a clas sin the button that can be checked in the event listener
+            taskButton.classList.add('task-edit');
+            taskButton.innerHTML = "Edit Task";
+        }
+    }
+}
+
+function completeTask(id){
+    //cycle through tasks in the Array
+    for (i=0; i<taskArray.length; i++){
+        //check to see if the current task ID equals the id we are trying to change
+        if (taskArray[i].id == id){
+            //change the status to complete
             taskArray[i].status = "complete";
         }
     }
+    //reload the task display
     loadTasks();
-    console.log(taskArray);
+    //DEBUG
+    //console.log(taskArray);
 }
 
 function highestID(){
@@ -100,17 +136,22 @@ function highestID(){
 }
 
 // function to add a new task to the list
-function addTask(){
+function addTask(edit = false){
 
     //set a variable that grabs the content from the new task input
-    var taskContent = document.getElementById("newTaskInput").value;
+    var taskInputEl = document.getElementById("newTaskInput").value;
 
-    // Check if a task has been added to the box
-    if (taskContent != ""){
 
-        let dupeCheck = taskArray.find((element) => element == taskContent);
-        if(dupeCheck != "") {alert("Duplicate Task!");}else{
+    // If the task input is blank then throw an error
+    if (taskInputEl == ""){alert("Please type a task in the input box!");}else{
 
+        // set a variable find an element of the taskArray that equals the taskInput
+        const dupeCheck = taskArray.find((element) => element.content === taskInputEl);
+        console.log(dupeCheck);
+        // if the dupeCheck has found something and we are not in edit mode the send an alert
+        if(dupeCheck != undefined && !edit) {alert("Duplicate Task!");}else{
+            
+            // set constant for the area of html we will be adding the new task to. 
             const taskBodyEl = document.getElementById("taskBody");
 
             // set a variable for todays date
@@ -120,17 +161,38 @@ function addTask(){
             let dd = today.getDate(); // use the date object to get todays date;
             if (mm < 10) mm = '0' + mm // this adds a 0 to the front of the date if it is less than 10
             if (dd < 10) dd = '0' + dd; // this adds a 0 to the front of the month if it is less than 10
+            // set a time variable
             var time = today.toLocaleTimeString('en-UK', { hour: 'numeric', hour24: true, minute: 'numeric' });
+            // set a formatted date variable
             const formattedDate = `${yyyy}/${mm}/${dd} ${time}`;
 
-            addTaskArray = {
-                id : highestID() + 1,
-                status : "incomplete",
-                content : taskContent,
-                created : formattedDate,
-                completed : false
+            //check if we are not in edit mode
+            if(!edit){
+                // if we are not in edit mode then we can use a new ID
+                taskID = highestID() + 1;
+                // build the taskArray
+                addTaskArray = {
+                    id : taskID,
+                    status : "incomplete",
+                    content : taskInputEl,
+                    created : formattedDate,
+                    completed : false
+                }
+                // push the new array to the end of our existing task list
+                taskArray.push(addTaskArray);
+            }else{
+                //if we are in edit mode then use the ID from the dupecheck we did earlier
+                taskID = parseInt(document.getElementById("taskEditID").value);
+                // Find the index of the task we want to edit
+                const editIndex = taskArray.findIndex(task => task.id === taskID);
+
+                if (editIndex !== -1) {
+                    taskArray[editIndex].content = taskInputEl;
+                }else{alert("Error: Could not find the record to edit!")}
+                document.getElementById("taskEditID").value = "";
+                document.getElementById("newTaskButton").classList.remove("task-edit");
+                document.getElementById("newTaskButton").innerHTML = "Add Task";
             }
-            taskArray.push(addTaskArray);
 
             loadTasks();
             document.getElementById("newTaskInput").value = "";
@@ -138,5 +200,5 @@ function addTask(){
             console.log(taskArray);
         }
 
-    }else{alert("Please type a task in the input box!");}
+    }
 }
