@@ -2,32 +2,39 @@
 // Version 0.2
 
 var taskArray = [{
-    id : "001",
+    id : 1,
     status : "complete",
-    content : "create and array",
+    content : "create an array",
     created : "2025/07/03 16:37",
     completed : "2025/07/03 16:45"
 },
 {
-    id : "002",
+    id : 2,
     status : "complete",
     content : "create for each system that loads the array and displays the info in the display format",
     created : "2025/07/03 16:39",
     completed : "2025/07/03 16:46"
 },
 {
-    id : "003",
+    id : 3,
     status : "complete",
     content : "create a way of updating the array when a new task is added",
     created : "2025/07/03 16:47",
     completed : "2025/07/03 17:11"
 },
 {
-    id : "004",
+    id : 4,
     status : "incomplete",
     content : "create a write system for a file to store the array when a new task is added and call the file. This will need to create a new array listing, then update the file with the array and then reload the file to regenerate the tasks",
     created : "2025/07/03 16:47",
     completed : false
+},
+{
+    id : 5,
+    status : "complete",
+    content : "create a way for the script to check for duplicate tasks and alert the user",
+    created : "2025/07/04 13:42",
+    completed : "2025/07/04 14:33"
 }];
 
 //Wait for Document to load
@@ -80,6 +87,16 @@ function completeTask(id){
         }
     }
     loadTasks();
+    console.log(taskArray);
+}
+
+function highestID(){
+    let max = 0;
+    for (i=0; i<taskArray.length; i++){
+        currentID = parseInt(taskArray[i].id);
+        if (currentID > max){ max = currentID}
+    }
+    return max;
 }
 
 // function to add a new task to the list
@@ -91,30 +108,35 @@ function addTask(){
     // Check if a task has been added to the box
     if (taskContent != ""){
 
-        const taskBodyEl = document.getElementById("taskBody");
+        let dupeCheck = taskArray.find((element) => element == taskContent);
+        if(dupeCheck != "") {alert("Duplicate Task!");}else{
 
-        // set a variable for todays date
-        const today = new Date(); //set a new date object
-        const yyyy = today.getFullYear(); // use the date object to get the year in full
-        let mm = today.getMonth() + 1; // use the date object to get a the month. Months start at 0 so require a +1
-        let dd = today.getDate(); // use the date object to get todays date;
-        if (mm < 10) mm = '0' + mm // this adds a 0 to the front of the date if it is less than 10
-        if (dd < 10) dd = '0' + dd; // this adds a 0 to the front of the month if it is less than 10
-        var time = today.toLocaleTimeString('en-UK', { hour: 'numeric', hour24: true, minute: 'numeric' });
-        const formattedDate = `${yyyy}/${mm}/${dd} ${time}`;
+            const taskBodyEl = document.getElementById("taskBody");
 
-        addTaskArray = {
-            id : "",
-            status : "incomplete",
-            content : taskContent,
-            created : formattedDate,
-            completed : false
+            // set a variable for todays date
+            const today = new Date(); //set a new date object
+            const yyyy = today.getFullYear(); // use the date object to get the year in full
+            let mm = today.getMonth() + 1; // use the date object to get a the month. Months start at 0 so require a +1
+            let dd = today.getDate(); // use the date object to get todays date;
+            if (mm < 10) mm = '0' + mm // this adds a 0 to the front of the date if it is less than 10
+            if (dd < 10) dd = '0' + dd; // this adds a 0 to the front of the month if it is less than 10
+            var time = today.toLocaleTimeString('en-UK', { hour: 'numeric', hour24: true, minute: 'numeric' });
+            const formattedDate = `${yyyy}/${mm}/${dd} ${time}`;
+
+            addTaskArray = {
+                id : highestID() + 1,
+                status : "incomplete",
+                content : taskContent,
+                created : formattedDate,
+                completed : false
+            }
+            taskArray.push(addTaskArray);
+
+            loadTasks();
+            document.getElementById("newTaskInput").value = "";
+            document.getElementById("newTaskInput").focus();
+            console.log(taskArray);
         }
-        taskArray.push(addTaskArray);
-
-        loadTasks();
-        document.getElementById("newTaskInput").value = "";
-        taskContent.focus();
 
     }else{alert("Please type a task in the input box!");}
 }
