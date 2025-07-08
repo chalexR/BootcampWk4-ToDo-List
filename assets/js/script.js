@@ -46,12 +46,17 @@ var taskArray = [{
 
 //Wait for Document to load
 document.addEventListener("DOMContentLoaded", () => {
+    
+    // Call the loadTasks Function which will populate the taks ont he web page from the array.
     loadTasks();
+
     //Set a constant for the task button
     const taskButton = document.getElementById("newTaskButton");
 
     // add an event listener to see when the new Task Button has been clicked
     taskButton.addEventListener("click", () => {
+
+        //Set an edit variable - make it false
         let edit = false;
         // check if the button is in edit mode or not and set the edit variable to true if we are
         if(taskButton.classList.contains("task-edit")){edit = true}
