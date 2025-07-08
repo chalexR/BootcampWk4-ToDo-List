@@ -44,6 +44,39 @@ var taskArray = [{
     completed : false
 }];
 
+// FUNCTION to find the current highest ID 
+function highestID(){
+    //set variable to use as counter
+    let max = 0;
+    // cycle through the taskArray
+    for (i=0; i<taskArray.length; i++){
+        // set variable for the current records ID
+        let currentID = parseInt(taskArray[i].id);
+        // if this records ID is bigger than the current stored max number then chanfge the max to the current number
+        if (currentID > max){ max = currentID}
+    }
+    //return the maximum value found
+    return max;
+}
+
+// FUNCTION to get formatted date or time
+function formattedDateTime(func = "both"){
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const time = today.toLocaleTimeString('en-UK', { hour: 'numeric', hour24: true, minute: 'numeric' });
+    if(func == "date"){
+        return `${yyyy}/${mm}/${dd}`
+    }
+    if(func == "time"){
+        return time
+    }
+    if(func == "both"){
+        return `${yyyy}/${mm}/${dd} ${time}`
+    }
+}
+
 // FUNCTION to load tasks from array - set the default display condition to incomplete, this will mean by default we see the incomplete tasks
 function loadTasks(condition = "incomplete"){
     
@@ -121,21 +154,6 @@ function completeTask(id){
     //console.log(taskArray);
 }
 
-// FUNCTION to find the current highest ID 
-function highestID(){
-    //set variable to use as counter
-    let max = 0;
-    // cycle through the taskArray
-    for (i=0; i<taskArray.length; i++){
-        // set variable for the current records ID
-        let currentID = parseInt(taskArray[i].id);
-        // if this records ID is bigger than the current stored max number then chanfge the max to the current number
-        if (currentID > max){ max = currentID}
-    }
-    //return the maximum value found
-    return max;
-}
-
 // FUNCTION to add a new task to the list OR edit an existing one. Task Edit is set to false as default
 function addTask(edit = false){
 
@@ -156,17 +174,8 @@ function addTask(edit = false){
             // set constant for the area of html we will be adding the new task to. 
             const taskBodyEl = document.getElementById("taskBody");
 
-            // set a variable for todays date
-            const today = new Date(); //set a new date object
-            const yyyy = today.getFullYear(); // use the date object to get the year in full
-            let mm = today.getMonth() + 1; // use the date object to get a the month. Months start at 0 so require a +1
-            let dd = today.getDate(); // use the date object to get todays date;
-            if (mm < 10) mm = '0' + mm // this adds a 0 to the front of the date if it is less than 10
-            if (dd < 10) dd = '0' + dd; // this adds a 0 to the front of the month if it is less than 10
-            // set a time variable
-            var time = today.toLocaleTimeString('en-UK', { hour: 'numeric', hour24: true, minute: 'numeric' });
             // set a formatted date variable
-            const formattedDate = `${yyyy}/${mm}/${dd} ${time}`;
+            const formattedDate = formattedDateTime();
 
             //check that we are not in edit mode
             if(!edit){
