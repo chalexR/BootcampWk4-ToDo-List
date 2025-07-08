@@ -1,7 +1,7 @@
 // ToDo List Scripts
 // Version 1.0
 
-var taskArray = [{
+const taskArray = [{
     id : 1,
     status : "complete",
     content : "create an array to hold the tasks",
